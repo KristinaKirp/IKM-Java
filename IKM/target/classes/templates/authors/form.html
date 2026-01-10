@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${author.id != null ? 'Редактирование автора' : 'Добавление автора'}">Форма автора</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link">Книги</a>
+            <a th:href="@{/authors}" class="nav-link active">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2 th:text="${author.id != null ? 'Редактирование автора' : 'Добавление автора'}">
+            Форма автора
+        </h2>
+        <a th:href="@{/authors}" class="btn btn-back">← Назад к списку</a>
+    </div>
+
+    <!-- Форма -->
+    <div class="form-container">
+        <form th:action="${author.id != null ? '/authors/update/' + author.id : '/authors'}"
+              method="post"
+              th:object="${author}">
+
+            <!-- Скрытое поле для ID -->
+            <input type="hidden" th:field="*{id}" th:if="${author.id != null}">
+
+            <!-- Имя -->
+            <div class="form-group">
+                <label for="firstName">Имя *</label>
+                <input type="text" id="firstName" th:field="*{firstName}"
+                       class="form-control"
+                       placeholder="Введите имя автора"
+                       required>
+                <div class="error" th:if="${#fields.hasErrors('firstName')}"
+                     th:errors="*{firstName}"></div>
+            </div>
+
+            <!-- Фамилия -->
+            <div class="form-group">
+                <label for="lastName">Фамилия *</label>
+                <input type="text" id="lastName" th:field="*{lastName}"
+                       class="form-control"
+                       placeholder="Введите фамилию автора"
+                       required>
+                <div class="error" th:if="${#fields.hasErrors('lastName')}"
+                     th:errors="*{lastName}"></div>
+            </div>
+
+            <!-- Год рождения -->
+            <div class="form-group">
+                <label for="birthYear">Год рождения *</label>
+                <input type="number" id="birthYear" th:field="*{birthYear}"
+                       class="form-control"
+                       placeholder="Например: 1980"
+                       min="1000" max="2100"
+                       required>
+                <div class="error" th:if="${#fields.hasErrors('birthYear')}"
+                     th:errors="*{birthYear}"></div>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-save">
+                    <span th:text="${author.id != null ? 'Сохранить изменения' : 'Сохранить автора'}"></span>
+                </button>
+                <a th:href="@{/authors}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

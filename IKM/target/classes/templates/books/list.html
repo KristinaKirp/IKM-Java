@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список книг - Библиотека</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link active">Книги</a>
+            <a th:href="@{/authors}" class="nav-link">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок и кнопка -->
+    <div class="header">
+        <h2>Список книг</h2>
+        <a th:href="@{/books/new}" class="btn btn-add">Добавить книгу</a>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats">
+        <div class="stat-box">
+            <span class="stat-number" th:text="${bookCount}">0</span>
+            <span class="stat-label">Всего книг</span>
+        </div>
+    </div>
+
+    <!-- Сообщения -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Поиск -->
+    <div class="search-box">
+        <form th:action="@{/books/search}" method="get">
+            <div class="search-row">
+                <select name="searchType" class="form-control">
+                    <option value="">Выберите тип поиска</option>
+                    <option value="title" th:selected="${searchType == 'title'}">По названию</option>
+                    <option value="author" th:selected="${searchType == 'author'}">По автору</option>
+                    <option value="year" th:selected="${searchType == 'year'}">По году</option>
+                    <option value="feedback" th:selected="${searchType == 'feedback'}">По отзыву</option>
+                </select>
+                <input type="text" name="searchQuery" class="form-control"
+                       placeholder="Введите запрос..."
+                       th:value="${searchQuery}">
+                <button type="submit" class="btn btn-search">Найти</button>
+                <a th:href="@{/books}" class="btn btn-back">Сбросить</a>
+            </div>
+
+            <div class="search-row" style="margin-top: 10px;">
+                <select name="authorId" class="form-control">
+                    <option value="">Все авторы</option>
+                    <option th:each="author : ${authors}"
+                            th:value="${author.id}"
+                            th:text="${author.fullName}"
+                            th:selected="${selectedAuthorId == author.id}">
+                    </option>
+                </select>
+
+                <select name="genreId" class="form-control">
+                    <option value="">Все жанры</option>
+                    <option th:each="genre : ${genres}"
+                            th:value="${genre.id}"
+                            th:text="${genre.name}"
+                            th:selected="${selectedGenreId == genre.id}">
+                    </option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Таблица книг -->
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Год</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}"></td>
+                <td>
+                    <a th:href="@{/books/view/{id}(id=${book.id})}"
+                       class="book-title"
+                       th:text="${book.title}">
+                    </a>
+                </td>
+                <td th:text="${book.author?.fullName ?: 'Не указан'}"></td>
+                <td th:text="${book.publishYear}"></td>
+            </tr>
+            <tr th:if="${books.empty}">
+                <td colspan="5" class="no-data">
+                    Книги не найдены. <a th:href="@{/books/new}">Добавить первую книгу</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

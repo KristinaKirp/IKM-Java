@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список авторов - Библиотека</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link">Книги</a>
+            <a th:href="@{/authors}" class="nav-link active">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2>Список авторов</h2>
+        <a th:href="@{/authors/new}" class="btn btn-add">Добавить автора</a>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats">
+        <div class="stat-box">
+            <span class="stat-number" th:text="${authorCount}">0</span>
+            <span class="stat-label">Всего авторов</span>
+        </div>
+    </div>
+
+    <!-- Сообщения -->
+    <div th:if="${success}" class="alert alert-success">
+        <span th:text="${success}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Поиск -->
+    <div class="search-box">
+        <form th:action="@{/authors/search}" method="get">
+            <div class="search-row">
+                <select name="searchType" class="form-control">
+                    <option value="">Выберите тип поиска</option>
+                    <option value="lastName" th:selected="${searchType == 'lastName'}">По фамилии</option>
+                    <option value="firstName" th:selected="${searchType == 'firstName'}">По имени</option>
+                    <option value="fullName" th:selected="${searchType == 'fullName'}">По имени/фамилии</option>
+                    <option value="birthYear" th:selected="${searchType == 'birthYear'}">По году рождения</option>
+                </select>
+                <input type="text" name="searchQuery" class="form-control"
+                       placeholder="Введите запрос..."
+                       th:value="${searchQuery}">
+                <button type="submit" class="btn btn-search">Найти</button>
+                <a th:href="@{/authors}" class="btn btn-back">Сбросить</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Таблица авторов -->
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Год рождения</th>
+                <th>Полное имя</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="author : ${authors}">
+                <td th:text="${author.id}"></td>
+                <td th:text="${author.firstName}"></td>
+                <td th:text="${author.lastName}"></td>
+                <td th:text="${author.birthYear}"></td>
+                <td th:text="${author.fullName}"></td>
+            </tr>
+            <tr th:if="${authors.empty}">
+                <td colspan="6" class="no-data">
+                    Авторы не найдены. <a th:href="@{/authors/new}">Добавить первого автора</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

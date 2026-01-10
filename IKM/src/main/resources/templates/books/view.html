@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${book.title}">Просмотр книги</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link active">Книги</a>
+            <a th:href="@{/authors}" class="nav-link">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2 th:text="${book.title}">Название книги</h2>
+        <div>
+            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">Редактировать</a>
+            <a th:href="@{/books}" class="btn btn-back">← Назад к списку</a>
+        </div>
+    </div>
+
+    <!-- Информация о книге -->
+    <div class="detail-container">
+        <div class="detail-info">
+            <!-- Основная информация -->
+            <div class="info-item">
+                <span class="info-label">Название:</span>
+                <span class="info-value" th:text="${book.title}"></span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Автор:</span>
+                <span class="info-value">
+                    <a th:if="${book.author != null}"
+                       th:href="@{/authors/view/{id}(id=${book.author.id})}"
+                       th:text="${book.author.fullName}">
+                    </a>
+                    <span th:unless="${book.author != null}">Не указан</span>
+                </span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Год публикации:</span>
+                <span class="info-value" th:text="${book.publishYear}"></span>
+            </div>
+
+            <!-- Жанры -->
+            <div class="info-item">
+                <span class="info-label">Жанры:</span>
+                <div class="info-value">
+                    <span th:if="${book.genres == null || book.genres.empty}">Жанры не указаны</span>
+                    <a th:each="genre : ${book.genres}"
+                       th:href="@{/genres}"
+                       class="badge"
+                       th:text="${genre.name}">
+                    </a>
+                </div>
+            </div>
+
+            <!-- Отзыв -->
+            <div th:if="${book.feedback}" class="info-item">
+                <span class="info-label">Отзыв:</span>
+                <div class="info-value">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; border-left: 4px solid #007bff;">
+                        <p th:text="${book.feedback}" style="margin: 0; white-space: pre-wrap;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-edit">Редактировать</a>
+            <a th:href="@{/books/delete/{id}(id=${book.id})}"
+               class="btn btn-delete"
+               onclick="return confirm('Вы уверены, что хотите удалить эту книгу?')">
+                Удалить
+            </a>
+            <a th:href="@{/books}" class="btn btn-back">← Назад к списку</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.btn-delete')?.addEventListener('click', function(e) {
+        if (!confirm('Вы уверены, что хотите удалить эту книгу?')) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

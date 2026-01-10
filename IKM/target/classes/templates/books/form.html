@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${book.id != null ? 'Редактирование книги' : 'Добавление книги'}">Форма книги</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link active">Книги</a>
+            <a th:href="@{/authors}" class="nav-link">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <div class="header">
+        <h2 th:text="${book.id != null ? 'Редактирование книги' : 'Добавление книги'}">Форма книги</h2>
+        <a th:href="@{/books}" class="btn btn-back">← Назад к списку</a>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <div class="form-container">
+        <form th:action="${book.id != null ? '/books/update/' + book.id : '/books'}"
+              method="post">
+
+            <input type="hidden" name="id" th:if="${book.id != null}" th:value="${book.id}">
+
+            <!-- Название -->
+            <div class="form-group">
+                <label for="title">Название книги *</label>
+                <input type="text" id="title" name="title"
+                       th:value="${book.title}"
+                       class="form-control"
+                       placeholder="Введите название книги"
+                       required>
+            </div>
+
+            <!-- Автор: имя и фамилия -->
+            <div class="form-group">
+                <label>Автор *</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" name="authorFirstName"
+                           th:value="${book.author?.firstName}"
+                           class="form-control"
+                           placeholder="Имя автора"
+                           required>
+                    <input type="text" name="authorLastName"
+                           th:value="${book.author?.lastName}"
+                           class="form-control"
+                           placeholder="Фамилия автора"
+                           required>
+                </div>
+            </div>
+
+            <!-- Год публикации -->
+            <div class="form-group">
+                <label for="publishYear">Год публикации *</label>
+                <input type="number" id="publishYear" name="publishYear"
+                       th:value="${book.publishYear}"
+                       class="form-control"
+                       placeholder="Например: 2023"
+                       min="1000" max="2100"
+                       required>
+            </div>
+
+            <!-- Жанры -->
+            <div class="form-group">
+                <label for="genreInput">Жанры (через запятую) *</label>
+                <input type="text" id="genreInput" name="genreInput"
+                       th:value="${#strings.listJoin(book.genres.![name], ', ')}"
+                       class="form-control"
+                       placeholder="Например: Роман, Фантастика, Детектив"
+                       required>
+                <small>Разделяйте жанры запятой. Новые жанры будут созданы автоматически.</small>
+            </div>
+
+            <!-- Отзыв -->
+            <div class="form-group">
+                <label for="feedback">Отзыв (необязательно)</label>
+                <textarea id="feedback" name="feedback"
+                          th:text="${book.feedback}"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Ваш отзыв о книге..."></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-save">
+                    <span th:text="${book.id != null ? 'Сохранить изменения' : 'Сохранить книгу'}"></span>
+                </button>
+                <a th:href="@{/books}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

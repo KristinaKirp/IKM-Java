@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${author.fullName}">Просмотр автора</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <a th:href="@{/}" class="nav-brand">Библиотека</a>
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link">Книги</a>
+            <a th:href="@{/authors}" class="nav-link active">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2 th:text="${author.fullName}">Автор</h2>
+        <div>
+            <a th:href="@{/authors/edit/{id}(id=${author.id})}" class="btn btn-edit">Редактировать</a>
+            <a th:href="@{/authors}" class="btn btn-back">← Назад к списку</a>
+        </div>
+    </div>
+
+    <!-- Информация об авторе -->
+    <div class="detail-container">
+        <div class="detail-info">
+            <div class="info-item">
+                <span class="info-label">Полное имя:</span>
+                <span class="info-value" th:text="${author.fullName}"></span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Имя:</span>
+                <span class="info-value" th:text="${author.firstName}"></span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Фамилия:</span>
+                <span class="info-value" th:text="${author.lastName}"></span>
+            </div>
+
+            <div class="info-item">
+                <span class="info-label">Год рождения:</span>
+                <span class="info-value" th:text="${author.birthYear}"></span>
+            </div>
+        </div>
+
+        <!-- Книги автора -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h3>Книги этого автора (<span th:text="${bookCount}">0</span>)</h3>
+
+            <div th:if="${books.empty}" style="text-align: center; padding: 20px; color: #666;">
+                У этого автора пока нет книг.
+                <br>
+                <a th:href="@{/books/new}" class="btn btn-add" style="margin-top: 10px;">
+                    Добавить книгу
+                </a>
+            </div>
+
+            <div th:unless="${books.empty}" class="table-container" style="margin-top: 15px;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Год</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book : ${books}">
+                        <td th:text="${book.id}"></td>
+                        <td>
+                            <a th:href="@{/books/view/{id}(id=${book.id})}"
+                               th:text="${book.title}">
+                            </a>
+                        </td>
+                        <td th:text="${book.publishYear}"></td>
+                        <td class="actions">
+                            <a th:href="@{/books/view/{id}(id=${book.id})}"
+                               class="btn btn-view">👁️</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <a th:href="@{/authors/edit/{id}(id=${author.id})}" class="btn btn-edit">✏️ Редактировать</a>
+            <a th:href="@{/authors/delete/{id}(id=${author.id})}"
+               class="btn btn-delete"
+               onclick="return confirm('Вы уверены, что хотите удалить этого автора? Все его книги будут удалены!')">
+                🗑️ Удалить
+            </a>
+            <a th:href="@{/authors}" class="btn btn-back">← Назад к списку</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Подтверждение удаления
+    document.querySelector('.btn-delete')?.addEventListener('click', function(e) {
+        if (!confirm('Вы уверены, что хотите удалить этого автора? Все его книги будут удалены!')) {
+            e.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

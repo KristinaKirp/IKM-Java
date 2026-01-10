@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список жанров - Библиотека</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link">Книги</a>
+            <a th:href="@{/authors}" class="nav-link">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link active">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2>Список жанров</h2>
+        <a th:href="@{/genres/new}" class="btn btn-add">Добавить жанр</a>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats">
+        <div class="stat-box">
+            <span class="stat-number" th:text="${genreCount}">0</span>
+            <span class="stat-label">Всего жанров</span>
+        </div>
+    </div>
+
+    <!-- Сообщения -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Поиск -->
+    <div class="search-box">
+        <form th:action="@{/genres/search}" method="get">
+            <div class="search-row">
+                <input type="text" name="searchQuery" class="form-control"
+                       placeholder="Поиск по названию жанра..."
+                       th:value="${searchQuery}">
+                <button type="submit" class="btn btn-search">Найти</button>
+                <a th:href="@{/genres}" class="btn btn-back">Сбросить</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Таблица жанров -->
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="genre : ${genres}">
+                <td th:text="${genre.id}"></td>
+                <td th:text="${genre.name}"></td>
+                <td class="actions">
+                    <a th:href="@{/genres/delete/{id}(id=${genre.id})}"
+                       class="btn btn-delete" title="Удалить"
+                       onclick="return confirm('Удалить этот жанр?')">️</a>
+                </td>
+            </tr>
+            <tr th:if="${genres.empty}">
+                <td colspan="3" class="no-data">
+                    Жанры не найдены. <a th:href="@{/genres/new}">Добавить первый жанр</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

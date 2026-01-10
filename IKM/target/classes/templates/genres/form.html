@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление жанра - Библиотека</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container">
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-links">
+            <a th:href="@{/books}" class="nav-link">Книги</a>
+            <a th:href="@{/authors}" class="nav-link">Авторы</a>
+            <a th:href="@{/genres}" class="nav-link active">Жанры</a>
+        </div>
+    </nav>
+
+    <!-- Заголовок -->
+    <div class="header">
+        <h2>Добавление жанра</h2>
+        <a th:href="@{/genres}" class="btn btn-back">← Назад к списку</a>
+    </div>
+
+    <!-- Сообщения -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- Форма -->
+    <div class="form-container">
+        <form th:action="@{/genres}" method="post" th:object="${genre}">
+
+            <!-- Название жанра -->
+            <div class="form-group">
+                <label for="name">Название жанра *</label>
+                <input type="text" id="name" th:field="*{name}"
+                       class="form-control"
+                       placeholder="Введите название жанра"
+                       required>
+                <div class="error" th:if="${#fields.hasErrors('name')}"
+                     th:errors="*{name}"></div>
+                <small style="color: #666;">
+                    Примеры: Роман, Фантастика, Детектив, Поэзия, Драма
+                </small>
+            </div>
+
+            <!-- Кнопки -->
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-save">Сохранить жанр</button>
+                <a th:href="@{/genres}" class="btn btn-cancel">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
