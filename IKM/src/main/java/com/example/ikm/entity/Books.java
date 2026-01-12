@@ -6,7 +6,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
 import java.util.HashSet;
 import java.util.Set;
-
+/**
+ * Сущность, представляющая книгу в системе библиотеки.
+ * Связана с автором отношением "многие к одному" и с жанрами отношением "многие ко многим".
+ *
+ * <p>Аннотации:
+ * <ul>
+ *   <li>@Entity - указывает, что класс является JPA сущностью</li>
+ *   <li>@Table(name = "books") - задает имя таблицы в БД</li>
+ *   <li>@ManyToOne - отношение "много книг - один автор"</li>
+ *   <li>@ManyToMany - отношение "много книг - много жанров"</li>
+ *   <li>@JoinTable - определяет таблицу связи для ManyToMany</li>
+ * </ul>
+ * </p>
+ */
 @Entity
 @Table(name = "books")
 public class Books {

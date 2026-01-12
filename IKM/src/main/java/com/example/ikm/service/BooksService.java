@@ -13,13 +13,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+/**
+ * Сервисный класс для работы с книгами.
+ * Содержит бизнес-логику операций с книгами.
+ *
+ * <p>Аннотации:
+ * <ul>
+ *   <li>@Service - помечает класс как сервисный компонент Spring</li>
+ * </ul>
+ * </p>
+ */
 @Service
 public class BooksService {
     private final BooksRepository bookRepository;
     private final AuthorsRepository authorRepository;
     private final GenresRepository genreRepository;
-
+    /**
+     * Конструктор с внедрением зависимостей репозиториев.
+     *
+     * @param bookRepository репозиторий для работы с книгами
+     * @param authorRepository репозиторий для работы с авторами
+     * @param genreRepository репозиторий для работы с жанрами
+     */
     @Autowired
     public BooksService(BooksRepository bookRepository,
                         AuthorsRepository authorRepository,
@@ -28,20 +43,42 @@ public class BooksService {
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
     }
-
+    /**
+     * Получает список всех книг.
+     *
+     * @return список всех книг
+     */
     public List<Books> getAllBooks() {
         return bookRepository.findAll();
     }
-
+    /**
+     * Находит книгу по идентификатору.
+     *
+     * @param id идентификатор книги
+     * @return Optional с книгой, если найдена
+     */
     public Optional<Books> getBookById(Long id) {
         return bookRepository.findById(id);
     }
-
+    /**
+     * Сохраняет новую книгу или обновляет существующую.
+     * Выполняет валидацию и подготовку связанных объектов.
+     *
+     * @param book объект книги для сохранения
+     * @return сохраненная книга
+     */
     public Books saveBook(Books book) {
         validateAndPrepareBook(book);
         return bookRepository.save(book);
     }
-
+    /**
+     * Обновляет данные существующей книги.
+     *
+     * @param id идентификатор книги для обновления
+     * @param bookDetails новые данные книги
+     * @return обновленная книга
+     * @throws RuntimeException если книга не найдена
+     */
     public Books updateBook(Long id, Books bookDetails) {
         Books book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Книга не найдена"));
@@ -72,11 +109,24 @@ public class BooksService {
 
         return bookRepository.save(book);
     }
-
+    /**
+     * Удаляет книгу по идентификатору.
+     *
+     * @param id идентификатор книги для удаления
+     */
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);
     }
-
+    /**
+     * Выполняет поиск книг по различным критериям.
+     * Поддерживает поиск по типу, автору и жанру.
+     *
+     * @param searchType тип поиска (title, author, year, feedback)
+     * @param searchQuery поисковый запрос
+     * @param authorId идентификатор автора для фильтрации
+     * @param genreId идентификатор жанра для фильтрации
+     * @return список книг, соответствующих критериям поиска
+     */
     public List<Books> searchBooks(String searchType, String searchQuery, Long authorId, Long genreId) {
         List<Books> books;
 
@@ -111,44 +161,67 @@ public class BooksService {
 
         return books;
     }
-
-
+    /**
+     * Получает книги по идентификатору автора.
+     *
+     * @param authorId идентификатор автора
+     * @return список книг указанного автора
+     */
     public List<Books> getBooksByAuthorId(Long authorId) {
         return bookRepository.findByAuthorId(authorId);
     }
-
+    /**
+     * Получает книги по идентификатору жанра.
+     *
+     * @param genreId идентификатор жанра
+     * @return список книг указанного жанра
+     */
     public List<Books> getBooksByGenreId(Long genreId) {
         return filterBooksByGenre(genreId);
     }
-
+    /**
+     * Ищет книги по году публикации.
+     *
+     * @param year год публикации
+     * @return список книг, опубликованных в указанный год
+     */
     public List<Books> searchByPublishYear(Integer year) {
         return bookRepository.findByPublishYear(year);
     }
-
+    /**
+     * Ищет книги по имени автора.
+     *
+     * @param authorName имя или фамилия автора
+     * @return список книг указанного автора
+     */
     public List<Books> searchByAuthorName(String authorName) {
         return bookRepository.findByAuthorFirstNameContainingIgnoreCaseAndTitleContainingIgnoreCase(
                 authorName, "");
     }
-
+    /**
+     * Ищет книги по содержанию отзыва.
+     *
+     * @param feedback текст для поиска в отзывах
+     * @return список книг с отзывами, содержащими указанный текст
+     */
     public List<Books> searchByFeedbackContaining(String feedback) {
         return bookRepository.findByFeedbackContainingIgnoreCase(feedback);
     }
-
+    /**
+     * Ищет книги по названию.
+     *
+     * @param title часть названия для поиска
+     * @return список книг с названиями, содержащими указанный текст
+     */
     public List<Books> searchByTitleContaining(String title) {
         return bookRepository.findByTitleContainingIgnoreCase(title);
     }
-
-    public List<Books> searchBooksByYearRange(Integer startYear, Integer endYear) {
-        if (startYear != null && endYear != null) {
-            return bookRepository.findByPublishYearBetween(startYear, endYear);
-        } else if (startYear != null) {
-            return bookRepository.findByPublishYear(startYear);
-        } else {
-            return bookRepository.findAll();
-        }
-    }
-
-
+    /**
+     * Валидирует и подготавливает книгу перед сохранением.
+     * Проверяет существование автора и жанров, при необходимости загружает их из БД.
+     *
+     * @param book книга для валидации и подготовки
+     */
     private void validateAndPrepareBook(Books book) {
         // Проверяем автора
         if (book.getAuthor() != null && book.getAuthor().getId() != null) {
@@ -177,7 +250,12 @@ public class BooksService {
             book.setGenres(managedGenres);
         }
     }
-
+    /**
+     * Фильтрует книги по идентификатору жанра.
+     *
+     * @param genreId идентификатор жанра
+     * @return список книг, относящихся к указанному жанру
+     */
     private List<Books> filterBooksByGenre(Long genreId) {
         List<Books> allBooks = bookRepository.findAll();
         return allBooks.stream()
@@ -185,11 +263,20 @@ public class BooksService {
                         .anyMatch(genre -> genre.getId().equals(genreId)))
                 .toList();
     }
-
+    /**
+     * Подсчитывает общее количество книг.
+     *
+     * @return количество книг
+     */
     public long countBooks() {
         return bookRepository.count();
     }
-
+    /**
+     * Подсчитывает количество книг указанного автора.
+     *
+     * @param authorId идентификатор автора
+     * @return количество книг автора
+     */
     public long countBooksByAuthor(Long authorId) {
         return bookRepository.findByAuthorId(authorId).size();
     }

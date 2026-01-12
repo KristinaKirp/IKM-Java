@@ -39,20 +39,12 @@
         <span th:text="${error}"></span>
     </div>
 
-    <!-- Поиск -->
+
     <div class="search-box">
         <form th:action="@{/authors/search}" method="get">
             <div class="search-row">
-                <select name="searchType" class="form-control">
-                    <option value="">Выберите тип поиска</option>
-                    <option value="lastName" th:selected="${searchType == 'lastName'}">По фамилии</option>
-                    <option value="firstName" th:selected="${searchType == 'firstName'}">По имени</option>
-                    <option value="fullName" th:selected="${searchType == 'fullName'}">По имени/фамилии</option>
-                    <option value="birthYear" th:selected="${searchType == 'birthYear'}">По году рождения</option>
-                </select>
                 <input type="text" name="searchQuery" class="form-control"
-                       placeholder="Введите запрос..."
-                       th:value="${searchQuery}">
+                       placeholder="Введите запрос..." required>
                 <button type="submit" class="btn btn-search">Найти</button>
                 <a th:href="@{/authors}" class="btn btn-back">Сбросить</a>
             </div>
@@ -81,7 +73,7 @@
             </tr>
             <tr th:if="${authors.empty}">
                 <td colspan="6" class="no-data">
-                    Авторы не найдены. <a th:href="@{/authors/new}">Добавить первого автора</a>
+                    Авторы не найдены.
                 </td>
             </tr>
             </tbody>

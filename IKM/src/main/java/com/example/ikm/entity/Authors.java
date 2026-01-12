@@ -2,10 +2,26 @@ package com.example.ikm.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
-import java.util.List;
+import jakarta.validation.constraints.Pattern;
 
+import java.util.List;
+/**
+        * Сущность, представляющая автора в системе библиотеки.
+ * Связана с книгами отношением "один ко многим".
+        *
+        * <p>Аннотации:
+        * <ul>
+ *   <li>@Entity - указывает, что класс является JPA сущностью</li>
+        *   <li>@Table(name = "authors") - задает имя таблицы в БД</li>
+        *   <li>@Id - обозначает первичный ключ</li>
+        *   <li>@GeneratedValue - стратегия генерации ID</li>
+        *   <li>@OneToMany - отношение "один автор - много книг"</li>
+        *   <li>@NotBlank - проверка, что поле не пустое</li>
+        *   <li>@Pattern - валидация по регулярному выражению</li>
+        * </ul>
+        * </p>
+        */
 @Entity
 @Table(name = "authors")
 public class Authors {
@@ -14,10 +30,12 @@ public class Authors {
     private Long id;
 
     @NotBlank(message = "Имя обязательно")
+    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z\\-']+$", message = "Имя должно содержать только буквы, дефисы и апострофы")
     @Column(name = "first_name")
     private String firstName;
 
     @NotBlank(message = "Фамилия обязательна")
+    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z\\-']+$", message = "Фамилия должна содержать только буквы, дефисы и апострофы")
     @Column(name = "last_name")
     private String lastName;
 
@@ -25,10 +43,13 @@ public class Authors {
     @Column(name = "birth_year")
     private Integer birthYear;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Books> books;
-
-    // Геттеры, сеттеры и вспомогательные методы
+    /**
+     * Возвращает полное имя автора (имя + фамилия).
+     *
+     * @return полное имя автора
+     */
     public String getFullName() {
         return firstName + " " + lastName;
     }

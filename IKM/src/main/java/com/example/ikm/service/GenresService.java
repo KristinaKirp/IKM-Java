@@ -8,33 +8,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+/**
+ * Сервисный класс для работы с жанрами.
+ * Содержит бизнес-логику операций с жанрами.
+ *
+ * <p>Аннотации:
+ * <ul>
+ *   <li>@Service - помечает класс как сервисный компонент Spring</li>
+ * </ul>
+ * </p>
+ */
 @Service
 public class GenresService {
     private final GenresRepository genreRepository;
     private final BooksRepository booksRepository;
-
+    /**
+     * Конструктор с внедрением зависимостей репозиториев.
+     *
+     * @param genreRepository репозиторий для работы с жанрами
+     * @param booksRepository репозиторий для работы с книгами
+     */
     @Autowired
     public GenresService(GenresRepository genreRepository, BooksRepository booksRepository) {
         this.genreRepository = genreRepository;
         this.booksRepository = booksRepository;
     }
-
+    /**
+     * Получает список всех жанров.
+     *
+     * @return список всех жанров
+     */
     public List<Genres> getAllGenres() {
         return genreRepository.findAll();
     }
-
+    /**
+     * Находит жанр по идентификатору.
+     *
+     * @param id идентификатор жанра
+     * @return Optional с жанром, если найден
+     */
     public Optional<Genres> getGenreById(Long id) {
         return genreRepository.findById(id);
     }
-
+    /**
+     * Сохраняет новый жанр.
+     * Проверяет уникальность названия жанра.
+     *
+     * @param genre объект жанра для сохранения
+     * @return сохраненный жанр
+     * @throws RuntimeException если жанр с таким названием уже существует
+     */
     public Genres saveGenre(Genres genre) {
         if (genreRepository.existsByName(genre.getName())) {
             throw new RuntimeException("Жанр '" + genre.getName() + "' уже существует");
         }
         return genreRepository.save(genre);
     }
-
+    /**
+     * Обновляет данные существующего жанра.
+     *
+     * @param id идентификатор жанра для обновления
+     * @param genreDetails новые данные жанра
+     * @return обновленный жанр
+     * @throws RuntimeException если жанр не найден или новое название уже существует
+     */
     public Genres updateGenre(Long id, Genres genreDetails) {
         Genres genre = genreRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Жанр не найден"));
@@ -47,14 +84,25 @@ public class GenresService {
         genre.setName(genreDetails.getName());
         return genreRepository.save(genre);
     }
-
+    /**
+     * Удаляет жанр по идентификатору.
+     * Проверяет, используется ли жанр в книгах.
+     *
+     * @param id идентификатор жанра для удаления
+     * @throws RuntimeException если жанр используется в книгах
+     */
     public void deleteGenre(Long id) {
         if (isGenreUsed(id)) {
             throw new RuntimeException("Нельзя удалить жанр, который используется в книгах");
         }
         genreRepository.deleteById(id);
     }
-
+    /**
+     * Ищет жанры по названию.
+     *
+     * @param searchQuery текст для поиска в названиях жанров
+     * @return список жанров, содержащих указанный текст в названии
+     */
     public List<Genres> searchGenres(String searchQuery) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
             return genreRepository.findAll();
@@ -62,15 +110,30 @@ public class GenresService {
             return genreRepository.findByNameContainingIgnoreCase(searchQuery);
         }
     }
-
+    /**
+     * Находит жанр по точному названию.
+     *
+     * @param name точное название жанра
+     * @return Optional с жанром, если найден
+     */
     public Optional<Genres> findGenreByName(String name) {
         return genreRepository.findByName(name);
     }
-
+    /**
+     * Проверяет существование жанра по названию.
+     *
+     * @param name название жанра для проверки
+     * @return true, если жанр существует, иначе false
+     */
     public boolean genreExists(String name) {
         return genreRepository.existsByName(name);
     }
-
+    /**
+     * Проверяет, используется ли жанр в каких-либо книгах.
+     *
+     * @param genreId идентификатор жанра
+     * @return true, если жанр используется в книгах, иначе false
+     */
     public boolean isGenreUsed(Long genreId) {
         List<Books> allBooks = booksRepository.findAll();
         for (Books book : allBooks) {
@@ -81,7 +144,13 @@ public class GenresService {
         }
         return false;
     }
-
+    /**
+     * Находит существующий жанр или создает новый, если не найден.
+     *
+     * @param name название жанра
+     * @return существующий или созданный жанр
+     * @throws IllegalArgumentException если название пустое
+     */
     public Genres getOrCreateGenre(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Название жанра не может быть пустым");
@@ -94,7 +163,13 @@ public class GenresService {
                     return genreRepository.save(newGenre);
                 });
     }
-
+    /**
+     * Создает или находит жанры из строки ввода, разделенной запятыми.
+     *
+     * @param input строка с жанрами, разделенными запятыми
+     * @return множество жанров
+     * @throws IllegalArgumentException если строка пустая или не удалось извлечь жанры
+     */
     public Set<Genres> findOrCreateGenresFromInput(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw new IllegalArgumentException("Жанры не указаны");
@@ -117,7 +192,11 @@ public class GenresService {
 
         return genres;
     }
-
+    /**
+     * Подсчитывает общее количество жанров.
+     *
+     * @return количество жанров
+     */
     public long countGenres() {
         return genreRepository.count();
     }

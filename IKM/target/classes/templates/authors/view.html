@@ -84,7 +84,7 @@
                         <td th:text="${book.publishYear}"></td>
                         <td class="actions">
                             <a th:href="@{/books/view/{id}(id=${book.id})}"
-                               class="btn btn-view">👁️</a>
+                               class="btn btn-view">Информация о книге</a>
                         </td>
                     </tr>
                     </tbody>
@@ -94,11 +94,11 @@
 
         <!-- Кнопки действий -->
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            <a th:href="@{/authors/edit/{id}(id=${author.id})}" class="btn btn-edit">✏️ Редактировать</a>
+            <a th:href="@{/authors/edit/{id}(id=${author.id})}" class="btn btn-edit">Редактировать</a>
             <a th:href="@{/authors/delete/{id}(id=${author.id})}"
                class="btn btn-delete"
                onclick="return confirm('Вы уверены, что хотите удалить этого автора? Все его книги будут удалены!')">
-                🗑️ Удалить
+                 Удалить
             </a>
             <a th:href="@{/authors}" class="btn btn-back">← Назад к списку</a>
         </div>

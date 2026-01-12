@@ -67,13 +67,16 @@
                 <td th:text="${genre.name}"></td>
                 <td class="actions">
                     <a th:href="@{/genres/delete/{id}(id=${genre.id})}"
-                       class="btn btn-delete" title="Удалить"
-                       onclick="return confirm('Удалить этот жанр?')">️</a>
+                       class="btn btn-delete"
+                       title="Удалить"
+                       onclick="return confirm('Удалить этот жанр?')">
+                        Удалить
+                    </a>
                 </td>
             </tr>
             <tr th:if="${genres.empty}">
                 <td colspan="3" class="no-data">
-                    Жанры не найдены. <a th:href="@{/genres/new}">Добавить первый жанр</a>
+                    Жанры не найдены.
                 </td>
             </tr>
             </tbody>
