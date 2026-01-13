@@ -43,4 +43,7 @@ public interface GenresRepository extends JpaRepository<Genres, Long> {
      * @return true, если жанр существует, иначе false
      */
     boolean existsByName(String name);
+
+    Optional<Genres> findByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCase(String name);
 }

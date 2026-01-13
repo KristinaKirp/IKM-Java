@@ -59,9 +59,11 @@ public class GenresService {
      * @throws RuntimeException если жанр с таким названием уже существует
      */
     public Genres saveGenre(Genres genre) {
-        if (genreRepository.existsByName(genre.getName())) {
-            throw new RuntimeException("Жанр '" + genre.getName() + "' уже существует");
+        String normalizedName = capitalizeFirst(genre.getName().trim().toLowerCase());
+        if (genreRepository.existsByNameIgnoreCase(normalizedName)) {
+            throw new RuntimeException("Жанр '" + normalizedName + "' уже существует");
         }
+        genre.setName(normalizedName); // сохраняем в нормализованном виде
         return genreRepository.save(genre);
     }
     /**
@@ -156,13 +158,23 @@ public class GenresService {
             throw new IllegalArgumentException("Название жанра не может быть пустым");
         }
         String cleanName = name.trim();
-        return genreRepository.findByName(cleanName)
+
+        // Ищем без учёта регистра
+        return genreRepository.findByNameIgnoreCase(cleanName)
                 .orElseGet(() -> {
+                    // Перед сохранением нормализуем регистр (например, с заглавной буквы)
+                    String normalized = capitalizeFirst(cleanName.toLowerCase());
                     Genres newGenre = new Genres();
-                    newGenre.setName(cleanName);
+                    newGenre.setName(normalized);
                     return genreRepository.save(newGenre);
                 });
     }
+
+    private String capitalizeFirst(String input) {
+        if (input == null || input.isEmpty()) return input;
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
     /**
      * Создает или находит жанры из строки ввода, разделенной запятыми.
      *
